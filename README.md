@@ -1,138 +1,140 @@
 # Everything MCP Server
 
-一个用 Go 语言实现的 MCP (Model Context Protocol) 服务器，用于调用 Everything 的 HTTP API，为 LLM agent 提供自然语言的文件搜索功能。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-> 🚀 **快速开始**: 如果您想立即开始使用，请查看 [快速开始指南](docs/QUICK_START.md)
+An MCP (Model Context Protocol) server implementation in Go for calling Everything's HTTP API, enabling LLM agents to perform natural language file search and browsing operations.
 
-## 功能特性
+> 🚀 **Quick Start**: Check out the [Quick Start Guide](docs/QUICK_START.md) to get started immediately
 
-- 🔍 **14 个强大工具**: 提供丰富的文件搜索和浏览功能
-  - **11 个搜索工具**: 基本搜索、扩展名、路径、大小、日期、内容类型等
-  - **3 个浏览工具**: 驱动器列表、目录浏览、文件信息
-- 📁 **文件系统浏览**: 像资源管理器一样浏览文件系统
-  - 列出所有驱动器 (C:, D:, E:)
-  - 逐级浏览目录
-  - 查看文件详细信息
-- 🚀 **高性能**: 利用 Everything 的快速索引能力
-- 💬 **自然语言**: LLM agent 可以通过自然语言描述来查找文件
-- 🔐 **认证支持**: 支持 HTTP Basic 认证
-- 📊 **JSON 格式**: 返回结构化的 JSON 数据
-- 🎯 **精确匹配**: 支持 Everything 的完整搜索语法
+## Features
 
-## 前置要求
+- 🔍 **14 Powerful Tools**: Rich file search and browsing capabilities
+  - **11 Search Tools**: Basic search, extension, path, size, date, content type, etc.
+  - **3 Browse Tools**: Drive list, directory browsing, file information
+- 📁 **File System Browsing**: Navigate the file system like Windows Explorer
+  - List all drives (C:, D:, E:)
+  - Browse directories level by level
+  - View detailed file information
+- 🚀 **High Performance**: Leverage Everything's lightning-fast indexing
+- 💬 **Natural Language**: LLM agents can find files using natural language
+- 🔐 **Authentication**: Support for HTTP Basic Authentication
+- 📊 **JSON Format**: Returns structured JSON data
+- 🎯 **Precise Matching**: Full support for Everything search syntax
 
-1. **Everything 软件**: 需要安装并运行 [Everything](https://www.voidtools.com/)
-2. **启用 HTTP 服务器**: 在 Everything 中启用 HTTP 服务器功能
-   - 打开 Everything → 工具 → 选项
-   - 选择 "HTTP 服务器" 页面
-   - 启用 HTTP 服务器
-   - 设置端口（默认 80）
-   - （可选）启用认证
+## Prerequisites
 
-## 安装
+1. **Everything Software**: Install and run [Everything](https://www.voidtools.com/)
+2. **Enable HTTP Server**: Enable HTTP server in Everything
+   - Open Everything → Tools → Options
+   - Select "HTTP Server" page
+   - Enable HTTP Server
+   - Set port (default 80)
+   - (Optional) Enable authentication
 
-### 从源码编译
+## Installation
+
+### Build from Source
 
 ```bash
 git clone https://github.com/skyvense/everything-mcp.git
 cd everything-mcp
 
-# 使用 Makefile 编译（推荐）
+# Build with Makefile (recommended)
 make build
 
-# 或者直接使用 go build
+# Or build directly with go
 go build -o everything-mcp ./cmd/everything-mcp
 ```
 
-### 使用 Go 安装
+### Install with Go
 
 ```bash
 go install github.com/skyvense/everything-mcp/cmd/everything-mcp@latest
 ```
 
-## 配置
+## Configuration
 
-### 环境变量
+### Environment Variables
 
-- `EVERYTHING_BASE_URL`: Everything HTTP API 的基础 URL（默认: `http://localhost`）
-- `EVERYTHING_PORT`: Everything HTTP API 的端口（默认: `80`）
-- `EVERYTHING_USERNAME`: Everything HTTP API 的用户名（可选，如果 Everything 启用了认证）
-- `EVERYTHING_PASSWORD`: Everything HTTP API 的密码（可选，如果 Everything 启用了认证）
-- `EVERYTHING_DEBUG`: 启用调试日志（设置为 `true` 可查看详细的请求信息）
+- `EVERYTHING_BASE_URL`: Everything HTTP API base URL (default: `http://localhost`)
+- `EVERYTHING_PORT`: Everything HTTP API port (default: `80`)
+- `EVERYTHING_USERNAME`: Everything HTTP API username (optional, if authentication is enabled)
+- `EVERYTHING_PASSWORD`: Everything HTTP API password (optional, if authentication is enabled)
+- `EVERYTHING_DEBUG`: Enable debug logs (set to `true` to see detailed request information)
 
-### 示例配置
+### Example Configuration
 
 ```bash
-# 基本配置（无认证）
+# Basic configuration (no authentication)
 export EVERYTHING_BASE_URL="http://localhost"
 export EVERYTHING_PORT="80"
 
-# 带认证的配置
+# Configuration with authentication
 export EVERYTHING_BASE_URL="http://192.168.7.187"
-export EVERYTHING_PORT="51780"
+export EVERYTHING_PORT="1780"
 export EVERYTHING_USERNAME="your_username"
 export EVERYTHING_PASSWORD="your_password"
 
-# 启用调试模式
+# Enable debug mode
 export EVERYTHING_DEBUG="true"
 ```
 
-## 使用方法
+## Usage
 
-### 使用启动脚本（推荐）
+### Using Startup Script (Recommended)
 
-项目提供了便捷的启动脚本，已预配置连接信息：
+The project provides convenient startup scripts with pre-configured settings:
 
 ```bash
 # Linux/macOS
 ./scripts/start.sh
 ```
 
-启动脚本会自动：
-- 设置环境变量（URL、端口、用户名、密码）
-- 检查并编译程序（如果需要）
-- 显示配置信息
-- 启动服务器
+The startup script will automatically:
+- Set environment variables (URL, port, username, password)
+- Check and compile the program if needed
+- Display configuration information
+- Start the server
 
-### 使用 Makefile
+### Using Makefile
 
 ```bash
-# 编译主程序
+# Build main program
 make build
 
-# 编译所有程序（包括测试客户端）
+# Build all programs (including test client)
 make build-all
 
-# 运行主程序
+# Run main program
 make run
 
-# 运行测试
+# Run tests
 make test
 
-# 查看所有可用命令
+# View all available commands
 make help
 ```
 
-### 直接运行
+### Direct Run
 
-如果需要自定义配置，可以直接设置环境变量后运行：
+If you need custom configuration, set environment variables and run directly:
 
 ```bash
 export EVERYTHING_BASE_URL="http://192.168.7.187"
-export EVERYTHING_PORT="51780"
-export EVERYTHING_USERNAME="nate"
+export EVERYTHING_PORT="1780"
+export EVERYTHING_USERNAME="your_username"
 export EVERYTHING_PASSWORD="your_password"
 
 ./everything-mcp
 ```
 
-服务器将通过 stdio 与 MCP 客户端通信。
+The server will communicate with MCP clients via stdio.
 
-### 在 MCP 客户端中配置
+### Configure in MCP Client
 
 #### Cursor IDE
 
-在 Cursor 的 MCP 配置文件中添加（通常位于 `~/.cursor/mcp.json` 或通过设置界面配置）：
+Add to Cursor's MCP configuration file (usually at `~/.cursor/mcp.json` or via settings UI):
 
 ```json
 {
@@ -153,51 +155,51 @@ export EVERYTHING_PASSWORD="your_password"
 
 #### Claude Desktop
 
-在 Claude Desktop 的配置文件中添加：
+Add to Claude Desktop's configuration file:
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-使用相同的 JSON 格式。
+Use the same JSON format.
 
-**注意**: 
-- 如果 Everything HTTP 服务器没有启用认证，可以省略 `EVERYTHING_USERNAME` 和 `EVERYTHING_PASSWORD`
-- 确保 `command` 路径指向实际的可执行文件位置
-- 如需调试，可添加 `"EVERYTHING_DEBUG": "true"` 到 `env` 中
+**Notes**: 
+- If Everything HTTP server doesn't have authentication enabled, omit `EVERYTHING_USERNAME` and `EVERYTHING_PASSWORD`
+- Ensure `command` points to the actual executable location
+- Add `"EVERYTHING_DEBUG": "true"` to `env` for debugging
 
-## 可用工具
+## Available Tools
 
-Everything MCP Server 提供 **14 个强大工具**：
+Everything MCP Server provides **14 powerful tools**:
 
-### 搜索工具 (11个)
+### Search Tools (11)
 
-#### 基础搜索
-1. **search_files** - 基本文件搜索
-2. **search_by_extension** - 按扩展名搜索
-3. **search_by_path** - 按路径搜索
+#### Basic Search
+1. **search_files** - Basic file search
+2. **search_by_extension** - Search by extension
+3. **search_by_path** - Search by path
 
-#### 高级搜索
-4. **search_by_size** - 按文件大小搜索
-5. **search_by_date** - 按日期搜索
-6. **search_recent_files** - 搜索最近修改的文件
-7. **search_large_files** - 搜索大文件
-8. **search_empty_files** - 搜索空文件/文件夹
+#### Advanced Search
+4. **search_by_size** - Search by file size
+5. **search_by_date** - Search by date
+6. **search_recent_files** - Search recently modified files
+7. **search_large_files** - Search large files
+8. **search_empty_files** - Search empty files/folders
 
-#### 专业搜索
-9. **search_by_content_type** - 按内容类型搜索（图片、视频、音频、文档等）
-10. **search_with_regex** - 正则表达式搜索
-11. **search_duplicate_names** - 搜索重复文件名
+#### Professional Search
+9. **search_by_content_type** - Search by content type (images, videos, audio, documents, etc.)
+10. **search_with_regex** - Regular expression search
+11. **search_duplicate_names** - Search duplicate filenames
 
-### 浏览工具 (3个)
+### Browse Tools (3)
 
-12. **list_drives** - 列出所有驱动器
-13. **list_directory** - 浏览目录内容
-14. **get_file_info** - 获取文件详细信息
+12. **list_drives** - List all drives
+13. **list_directory** - Browse directory contents
+14. **get_file_info** - Get detailed file information
 
-### 快速示例
+### Quick Examples
 
-**搜索示例**:
+**Search Examples**:
 ```json
-// 搜索最近 7 天的 PDF 文件
+// Search PDFs modified in last 7 days
 {
   "name": "search_recent_files",
   "arguments": {
@@ -206,7 +208,7 @@ Everything MCP Server 提供 **14 个强大工具**：
   }
 }
 
-// 搜索大于 100MB 的视频文件
+// Search video files larger than 100MB
 {
   "name": "search_by_content_type",
   "arguments": {
@@ -216,15 +218,15 @@ Everything MCP Server 提供 **14 个强大工具**：
 }
 ```
 
-**浏览示例**:
+**Browse Examples**:
 ```json
-// 列出所有驱动器
+// List all drives
 {
   "name": "list_drives",
   "arguments": {}
 }
 
-// 浏览 C 盘内容
+// Browse C drive
 {
   "name": "list_directory",
   "arguments": {
@@ -232,7 +234,7 @@ Everything MCP Server 提供 **14 个强大工具**：
   }
 }
 
-// 获取文件信息
+// Get file information
 {
   "name": "get_file_info",
   "arguments": {
@@ -241,54 +243,54 @@ Everything MCP Server 提供 **14 个强大工具**：
 }
 ```
 
-**详细文档**: 查看 [TOOLS.md](docs/TOOLS.md) 了解所有工具的完整说明和使用示例。
+**Full Documentation**: See [TOOLS.md](docs/TOOLS.md) for complete tool descriptions and usage examples.
 
-## 使用示例
+## Usage Examples
 
-### 通过 LLM Agent 使用
+### Using with LLM Agent
 
-LLM agent 可以通过自然语言来调用这些工具：
+LLM agents can call these tools using natural language:
 
-**基础搜索**:
-- "帮我找所有 PDF 文件"
-- "在 Documents 文件夹中搜索包含 'report' 的文件"
-- "查找所有 .txt 文件"
+**Basic Search**:
+- "Find all PDF files"
+- "Search for files containing 'report' in Documents folder"
+- "Find all .txt files"
 
-**高级搜索**:
-- "找出最近 3 天修改的文件"
-- "搜索大于 100MB 的文件"
-- "查找所有空文件夹"
-- "找出 2024 年创建的所有文档"
+**Advanced Search**:
+- "Find files modified in the last 3 days"
+- "Search for files larger than 100MB"
+- "Find all empty folders"
+- "Find all documents created in 2024"
 
-**专业搜索**:
-- "搜索所有图片文件"
-- "找出名为 config.json 的所有文件"
-- "使用正则表达式搜索所有 .log 文件"
-- "查找占用空间最大的 20 个文件"
+**Professional Search**:
+- "Search for all image files"
+- "Find all files named config.json"
+- "Use regex to search all .log files"
+- "Find the 20 largest files"
 
-**文件系统浏览**:
-- "显示所有驱动器"
-- "浏览 C 盘的内容"
-- "进入 Documents 文件夹"
-- "查看这个文件的详细信息"
+**File System Browsing**:
+- "Show all drives"
+- "Browse C drive contents"
+- "Enter Documents folder"
+- "Show detailed info for this file"
 
-## 技术细节
+## Technical Details
 
 ### Everything HTTP API
 
-Everything 的 HTTP API 使用简单的 GET 请求：
+Everything's HTTP API uses simple GET requests:
 
 ```
-GET http://localhost:80/?search=<查询字符串>&json=1&count=<最大结果数>
+GET http://localhost:80/?search=<query>&json=1&count=<max_results>
 ```
 
-**重要参数：**
-- `search`: 搜索查询字符串
-- `json=1`: 请求 JSON 格式响应（推荐）
-- `count`: 限制返回结果数量
-- `path`: 指定搜索路径
+**Important Parameters:**
+- `search`: Search query string
+- `json=1`: Request JSON format response (recommended)
+- `count`: Limit number of results
+- `path`: Specify search path
 
-**JSON 响应格式：**
+**JSON Response Format:**
 ```json
 {
   "totalResults": 123,
@@ -303,290 +305,291 @@ GET http://localhost:80/?search=<查询字符串>&json=1&count=<最大结果数>
 }
 ```
 
-### MCP 协议
+### MCP Protocol
 
-本服务器实现了 MCP (Model Context Protocol) 标准：
-- **通信方式**: 通过 stdio 与客户端通信
-- **协议**: JSON-RPC 2.0
-- **协议版本**: 2024-11-05
-- **支持的功能**: Tools（工具调用）
+This server implements the MCP (Model Context Protocol) standard:
+- **Communication**: Communicates with clients via stdio
+- **Protocol**: JSON-RPC 2.0
+- **Protocol Version**: 2024-11-05
+- **Supported Capabilities**: Tools (tool calling)
 
-## 开发
+## Development
 
-### 项目结构
+### Project Structure
 
 ```
 everything-mcp/
-├── cmd/                           # 可执行程序
-│   ├── everything-mcp/           # 主程序
+├── cmd/                           # Executable programs
+│   ├── everything-mcp/           # Main program
 │   │   └── main.go
-│   └── test-client/              # 测试客户端
+│   └── test-client/              # Test client
 │       └── main.go
-├── docs/                          # 文档
-│   ├── QUICK_START.md            # 快速开始指南
-│   ├── USAGE.md                  # 详细使用说明
-│   ├── TOOLS.md                  # 工具列表和使用说明
-│   └── PROJECT_STRUCTURE.md      # 项目结构说明
-├── examples/                      # 示例配置
-│   └── mcp-config-example.json   # MCP 配置示例
-├── scripts/                       # 脚本
-│   ├── start.sh                  # 启动脚本
-│   └── test-mcp.sh               # 测试脚本
-├── go.mod                         # Go 模块定义
-├── go.sum                         # Go 依赖校验
-├── Makefile                       # 构建脚本
-├── README.md                      # 本文档
-└── .gitignore                     # Git 忽略文件
+├── docs/                          # Documentation
+│   ├── QUICK_START.md            # Quick start guide
+│   ├── USAGE.md                  # Detailed usage
+│   ├── TOOLS.md                  # Tool list and usage
+│   └── PROJECT_STRUCTURE.md      # Project structure
+├── examples/                      # Example configurations
+│   └── mcp-config-example.json   # MCP configuration example
+├── scripts/                       # Scripts
+│   ├── start.sh                  # Startup script
+│   └── test-mcp.sh               # Test script
+├── go.mod                         # Go module definition
+├── go.sum                         # Go dependency checksums
+├── Makefile                       # Build script
+├── README.md                      # This document (English)
+├── README.zh-CN.md                # Chinese documentation
+└── .gitignore                     # Git ignore rules
 ```
 
-### 依赖
+### Dependencies
 
-- `github.com/mark3labs/mcp-go`: MCP 协议 Go 实现
+- `github.com/mark3labs/mcp-go`: MCP protocol Go implementation
 
-### 构建
+### Build
 
 ```bash
-# 使用 Makefile（推荐）
+# Build with Makefile (recommended)
 make build
 
-# 或者使用 go build
+# Or use go build
 go build -o everything-mcp ./cmd/everything-mcp
 
-# 构建测试客户端
+# Build test client
 make build-test-client
-# 或者
+# Or
 go build -o test-client ./cmd/test-client
 ```
 
-### 测试
+### Testing
 
-#### 单元测试
+#### Unit Tests
 
-运行所有单元测试：
+Run all unit tests:
 
 ```bash
-# 使用 Makefile
+# Using Makefile
 make test
 
-# 或者使用 go test
+# Or using go test
 go test -v ./...
 ```
 
-查看测试覆盖率：
+View test coverage:
 
 ```bash
-# 生成 HTML 覆盖率报告
+# Generate HTML coverage report
 make test-coverage
 
-# 或者使用 go test
+# Or use go test
 go test -cover ./...
 ```
 
-运行特定测试：
+Run specific tests:
 
 ```bash
 go test -v -run TestEverythingClient_Search ./cmd/everything-mcp
 ```
 
-当前测试覆盖率达到 **79%**，包括：
-- EverythingClient 的搜索功能测试
-- MCP 服务器的工具列表和处理测试
-- 所有三个搜索工具的完整测试
-- 错误处理和边界情况测试
-- HTTP 认证测试
+Current test coverage: **79%**, including:
+- EverythingClient search functionality tests
+- MCP server tool list and handling tests
+- Complete tests for all three search tools
+- Error handling and boundary case tests
+- HTTP authentication tests
 
-#### 集成测试
+#### Integration Tests
 
-使用测试客户端进行端到端测试：
+Use test client for end-to-end testing:
 
 ```bash
-# 使用 Makefile（推荐）
+# Using Makefile (recommended)
 make run-test
 
-# 或者手动编译和运行
+# Or manually compile and run
 make build-test-client
 ./test-client examples/mcp-config-example.json
 ```
 
-测试客户端会自动：
-1. 启动 MCP 服务器
-2. 执行完整的 MCP 协议握手
-3. 测试所有可用工具
-4. 显示详细的测试结果
+Test client will automatically:
+1. Start MCP server
+2. Execute complete MCP protocol handshake
+3. Test all available tools
+4. Display detailed test results
 
-详见 [docs/USAGE.md](docs/USAGE.md) 了解更多信息。
+See [docs/USAGE.md](docs/USAGE.md) for more information.
 
-### 运行服务器
+### Run Server
 
-确保 Everything 的 HTTP 服务器正在运行，然后：
+Ensure Everything's HTTP server is running, then:
 
 ```bash
-# 使用 Makefile
+# Using Makefile
 make run
 
-# 或者直接运行
+# Or run directly
 ./everything-mcp
 ```
 
-## 故障排除
+## Troubleshooting
 
-### HTTP 401 认证错误
+### HTTP 401 Authentication Error
 
-如果遇到 "HTTP 错误 401: 认证失败" 错误：
+If you encounter "HTTP error 401: Authentication failed":
 
-1. **检查用户名和密码**
+1. **Check username and password**
    ```bash
-   # 使用 curl 测试认证
+   # Test authentication with curl
    curl -u username:password "http://host:port/?search=test&json=1"
    ```
 
-2. **确认 Everything HTTP 服务器配置**
-   - 打开 Everything → 工具 → 选项 → HTTP 服务器
-   - 检查"需要用户名和密码"选项是否启用
-   - 确认用户名和密码设置
+2. **Verify Everything HTTP server configuration**
+   - Open Everything → Tools → Options → HTTP Server
+   - Check if "Require username and password" is enabled
+   - Confirm username and password settings
 
-3. **检查端口配置**
-   - 确保 `EVERYTHING_PORT` 与 Everything 中配置的端口一致
-   - URL 应该是 `http://host:port` 格式（端口号必须正确）
+3. **Check port configuration**
+   - Ensure `EVERYTHING_PORT` matches the port configured in Everything
+   - URL should be in format `http://host:port` (port must be correct)
 
-4. **启用调试模式**
+4. **Enable debug mode**
    ```bash
    export EVERYTHING_DEBUG="true"
    ./everything-mcp
    ```
-   查看详细的请求信息，包括 URL、认证头等
+   View detailed request information including URL, auth headers, etc.
 
-### 连接错误
+### Connection Error
 
-如果遇到连接错误，请检查：
+If you encounter connection errors, check:
 
-1. Everything 是否正在运行
-2. HTTP 服务器是否已启用
-3. 端口配置是否正确（包括在 URL 中）
-4. 防火墙是否阻止了连接
-5. 如果是远程服务器，检查网络连接和服务器可访问性
+1. Is Everything running?
+2. Is HTTP server enabled?
+3. Is port configuration correct (including in URL)?
+4. Is firewall blocking the connection?
+5. If remote server, check network connectivity and server accessibility
 
-**验证连接：**
+**Verify connection:**
 ```bash
-# 测试基本连接（无认证）
+# Test basic connection (no auth)
 curl "http://localhost:80/?search=test&json=1"
 
-# 测试带认证的连接
+# Test connection with auth
 curl -u username:password "http://host:port/?search=test&json=1"
 ```
 
-### 搜索无结果
+### No Search Results
 
-- 确保 Everything 已经索引了您的文件系统
-- 检查搜索查询是否正确
-- 尝试在 Everything 界面中直接搜索以验证
-- 使用 `json=1` 参数确保返回 JSON 格式
+- Ensure Everything has indexed your file system
+- Check if search query is correct
+- Try searching directly in Everything interface to verify
+- Use `json=1` parameter to ensure JSON format is returned
 
-### MCP 客户端连接问题
+### MCP Client Connection Issues
 
-如果 MCP 客户端无法连接到服务器：
+If MCP client cannot connect to server:
 
-1. **检查可执行文件路径**
-   - 确保配置文件中的 `command` 路径正确
-   - 使用绝对路径而不是相对路径
+1. **Check executable path**
+   - Ensure `command` path in configuration file is correct
+   - Use absolute path instead of relative path
 
-2. **检查环境变量**
-   - 确认所有必需的环境变量都已设置
-   - 特别是 `EVERYTHING_BASE_URL` 和 `EVERYTHING_PORT`
+2. **Check environment variables**
+   - Confirm all required environment variables are set
+   - Especially `EVERYTHING_BASE_URL` and `EVERYTHING_PORT`
 
-3. **查看日志**
-   - 在环境变量中添加 `EVERYTHING_DEBUG=true`
-   - 检查客户端的日志输出
+3. **View logs**
+   - Add `EVERYTHING_DEBUG=true` to environment variables
+   - Check client log output
 
-4. **测试服务器**
-   - 使用测试客户端验证服务器功能：
+4. **Test server**
+   - Verify server functionality with test client:
      ```bash
      make run-test
      ```
 
-### 常见问题
+### Common Questions
 
-**Q: 为什么搜索返回 HTML 而不是文件列表？**
+**Q: Why does search return HTML instead of file list?**
 
-A: 需要在请求中添加 `json=1` 参数。本服务器已自动处理，如果仍有问题，请检查 Everything 版本是否支持 JSON 输出。
+A: Need to add `json=1` parameter in request. This server handles it automatically. If still issues, check if Everything version supports JSON output.
 
-**Q: 如何限制搜索结果数量？**
+**Q: How to limit search result count?**
 
-A: 使用 `max_results` 参数，服务器会自动转换为 Everything API 的 `count` 参数。
+A: Use `max_results` parameter, server will automatically convert to Everything API's `count` parameter.
 
-**Q: 支持哪些搜索语法？**
+**Q: What search syntax is supported?**
 
-A: 支持 Everything 的完整搜索语法，包括：
-- 通配符：`*.txt`
-- 路径搜索：`C:\Users\Documents\`
-- 扩展名：`ext:pdf`
-- 正则表达式：`regex:.*\.log$`
-- 更多语法见 [Everything 搜索语法](https://www.voidtools.com/support/everything/searching/)
+A: Supports Everything's complete search syntax, including:
+- Wildcards: `*.txt`
+- Path search: `C:\Users\Documents\`
+- Extension: `ext:pdf`
+- Regular expressions: `regex:.*\.log$`
+- More syntax: [Everything Search Syntax](https://www.voidtools.com/support/everything/searching/)
 
-## 许可证
+## License
 
 MIT License
 
-## 贡献
+## Contributing
 
-欢迎提交 Issue 和 Pull Request！
+Issues and Pull Requests are welcome!
 
-## 更新日志
+## Changelog
 
 ### v1.2.0 (2026-01-12)
 
-- ✨ **新增 3 个文件系统浏览工具**，总计 14 个工具
-  - `list_drives` - 列出所有驱动器
-  - `list_directory` - 浏览目录内容
-  - `get_file_info` - 获取文件详细信息
-- 🎯 支持像资源管理器一样浏览文件系统
-- 📁 可以从驱动器开始逐级浏览目录
-- 📊 显示文件和文件夹的详细信息
+- ✨ **Added 3 file system browsing tools**, total 14 tools
+  - `list_drives` - List all drives
+  - `list_directory` - Browse directory contents
+  - `get_file_info` - Get detailed file information
+- 🎯 Support browsing file system like Explorer
+- 📁 Can browse directories level by level from drives
+- 📊 Display detailed file and folder information
 
 ### v1.1.0 (2026-01-12)
 
-- ✨ **新增 8 个搜索工具**，总计 11 个工具
-  - `search_by_size` - 按文件大小搜索
-  - `search_by_date` - 按日期搜索
-  - `search_recent_files` - 搜索最近修改的文件
-  - `search_large_files` - 搜索大文件
-  - `search_empty_files` - 搜索空文件/文件夹
-  - `search_by_content_type` - 按内容类型搜索
-  - `search_with_regex` - 正则表达式搜索
-  - `search_duplicate_names` - 搜索重复文件名
-- ✨ 添加文件大小格式化显示
-- 📝 新增完整的工具文档 (TOOLS.md)
+- ✨ **Added 8 search tools**, total 11 tools
+  - `search_by_size` - Search by file size
+  - `search_by_date` - Search by date
+  - `search_recent_files` - Search recently modified files
+  - `search_large_files` - Search large files
+  - `search_empty_files` - Search empty files/folders
+  - `search_by_content_type` - Search by content type
+  - `search_with_regex` - Regular expression search
+  - `search_duplicate_names` - Search duplicate filenames
+- ✨ Added file size formatting
+- 📝 Added complete tool documentation (TOOLS.md)
 
 ### v1.0.1 (2026-01-12)
 
-- 🐛 修复 URL 端口号未正确添加的问题
-- 🐛 修复 Everything HTTP API 返回 HTML 而不是 JSON 的问题
-- ✨ 添加 JSON 格式支持（`json=1` 参数）
-- ✨ 添加调试模式（`EVERYTHING_DEBUG` 环境变量）
-- ✨ 改进错误消息，特别是 401 认证错误
-- 📝 添加测试客户端 (`test-client`)
-- 📝 完善文档和故障排除指南
-- 🏗️ 重构项目结构，采用标准 Go 项目布局
-- 🔧 添加 Makefile 简化构建和测试
+- 🐛 Fixed URL port not being added correctly
+- 🐛 Fixed Everything HTTP API returning HTML instead of JSON
+- ✨ Added JSON format support (`json=1` parameter)
+- ✨ Added debug mode (`EVERYTHING_DEBUG` environment variable)
+- ✨ Improved error messages, especially 401 auth errors
+- 📝 Added test client (`test-client`)
+- 📝 Improved documentation and troubleshooting guide
+- 🏗️ Refactored project structure, adopted standard Go project layout
+- 🔧 Added Makefile to simplify build and test
 
 ### v1.0.0 (2026-01-11)
 
-- 🎉 初始版本发布
-- ✨ 实现三个搜索工具：`search_files`、`search_by_extension`、`search_by_path`
-- ✨ 支持 HTTP Basic 认证
-- ✨ 支持 MCP 协议 2024-11-05
-- 📝 完整的单元测试覆盖
+- 🎉 Initial release
+- ✨ Implemented three search tools: `search_files`, `search_by_extension`, `search_by_path`
+- ✨ Support HTTP Basic Authentication
+- ✨ Support MCP protocol 2024-11-05
+- 📝 Complete unit test coverage
 
-## 相关链接
+## Related Links
 
-- [Everything 官网](https://www.voidtools.com/)
-- [Everything HTTP API 文档](https://www.voidtools.com/support/everything/http/)
-- [Everything 搜索语法](https://www.voidtools.com/support/everything/searching/)
-- [MCP 协议规范](https://modelcontextprotocol.io/)
-- [mcp-go 库](https://github.com/mark3labs/mcp-go)
+- [Everything Official Website](https://www.voidtools.com/)
+- [Everything HTTP API Documentation](https://www.voidtools.com/support/everything/http/)
+- [Everything Search Syntax](https://www.voidtools.com/support/everything/searching/)
+- [MCP Protocol Specification](https://modelcontextprotocol.io/)
+- [mcp-go Library](https://github.com/mark3labs/mcp-go)
 
-## 致谢
+## Acknowledgments
 
-- [Everything](https://www.voidtools.com/) - 快速文件搜索工具
-- [mcp-go](https://github.com/mark3labs/mcp-go) - Go 语言的 MCP 协议实现
-- [Anthropic](https://www.anthropic.com/) - MCP 协议的创建者
+- [Everything](https://www.voidtools.com/) - Fast file search tool
+- [mcp-go](https://github.com/mark3labs/mcp-go) - Go implementation of MCP protocol
+- [Anthropic](https://www.anthropic.com/) - Creator of MCP protocol
