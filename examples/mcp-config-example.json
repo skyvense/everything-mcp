@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "everything": {
+      "command": "/Users/nate/Documents/git/everything-mcp/everything-mcp",
+      "comment": "使用绝对路径，或者如果已安装到 PATH 中，可以直接使用 'everything-mcp'",
+      "args": [],
+      "env": {
+        "EVERYTHING_BASE_URL": "http://192.168.7.187",
+        "EVERYTHING_PORT": "51780",
+        "EVERYTHING_USERNAME": "nate",
+        "EVERYTHING_PASSWORD": "checkout888"
+      },
+      "comment": "可选: 添加 EVERYTHING_DEBUG=true 启用调试日志"
+    }
+  }
+}
