@@ -6,11 +6,13 @@
 
 ## 功能特性
 
-- 🔍 **11 种搜索工具**: 提供丰富的文件搜索功能
-  - 基本搜索、扩展名搜索、路径搜索
-  - 按大小、日期、内容类型搜索
-  - 最近文件、大文件、空文件搜索
-  - 正则表达式、重复文件名搜索
+- 🔍 **14 个强大工具**: 提供丰富的文件搜索和浏览功能
+  - **11 个搜索工具**: 基本搜索、扩展名、路径、大小、日期、内容类型等
+  - **3 个浏览工具**: 驱动器列表、目录浏览、文件信息
+- 📁 **文件系统浏览**: 像资源管理器一样浏览文件系统
+  - 列出所有驱动器 (C:, D:, E:)
+  - 逐级浏览目录
+  - 查看文件详细信息
 - 🚀 **高性能**: 利用 Everything 的快速索引能力
 - 💬 **自然语言**: LLM agent 可以通过自然语言描述来查找文件
 - 🔐 **认证支持**: 支持 HTTP Basic 认证
@@ -164,30 +166,36 @@ export EVERYTHING_PASSWORD="your_password"
 
 ## 可用工具
 
-Everything MCP Server 提供 **11 个强大的搜索工具**：
+Everything MCP Server 提供 **14 个强大工具**：
 
-### 基础搜索工具
+### 搜索工具 (11个)
 
+#### 基础搜索
 1. **search_files** - 基本文件搜索
 2. **search_by_extension** - 按扩展名搜索
 3. **search_by_path** - 按路径搜索
 
-### 高级搜索工具
-
+#### 高级搜索
 4. **search_by_size** - 按文件大小搜索
 5. **search_by_date** - 按日期搜索
 6. **search_recent_files** - 搜索最近修改的文件
 7. **search_large_files** - 搜索大文件
 8. **search_empty_files** - 搜索空文件/文件夹
 
-### 专业搜索工具
-
+#### 专业搜索
 9. **search_by_content_type** - 按内容类型搜索（图片、视频、音频、文档等）
 10. **search_with_regex** - 正则表达式搜索
 11. **search_duplicate_names** - 搜索重复文件名
 
+### 浏览工具 (3个)
+
+12. **list_drives** - 列出所有驱动器
+13. **list_directory** - 浏览目录内容
+14. **get_file_info** - 获取文件详细信息
+
 ### 快速示例
 
+**搜索示例**:
 ```json
 // 搜索最近 7 天的 PDF 文件
 {
@@ -206,12 +214,29 @@ Everything MCP Server 提供 **11 个强大的搜索工具**：
     "query": "size:>100MB"
   }
 }
+```
 
-// 搜索重复的配置文件
+**浏览示例**:
+```json
+// 列出所有驱动器
 {
-  "name": "search_duplicate_names",
+  "name": "list_drives",
+  "arguments": {}
+}
+
+// 浏览 C 盘内容
+{
+  "name": "list_directory",
   "arguments": {
-    "filename": "config.json"
+    "path": "C:\\"
+  }
+}
+
+// 获取文件信息
+{
+  "name": "get_file_info",
+  "arguments": {
+    "path": "C:\\Users\\Documents\\report.pdf"
   }
 }
 ```
@@ -240,6 +265,12 @@ LLM agent 可以通过自然语言来调用这些工具：
 - "找出名为 config.json 的所有文件"
 - "使用正则表达式搜索所有 .log 文件"
 - "查找占用空间最大的 20 个文件"
+
+**文件系统浏览**:
+- "显示所有驱动器"
+- "浏览 C 盘的内容"
+- "进入 Documents 文件夹"
+- "查看这个文件的详细信息"
 
 ## 技术细节
 
@@ -501,6 +532,16 @@ MIT License
 欢迎提交 Issue 和 Pull Request！
 
 ## 更新日志
+
+### v1.2.0 (2026-01-12)
+
+- ✨ **新增 3 个文件系统浏览工具**，总计 14 个工具
+  - `list_drives` - 列出所有驱动器
+  - `list_directory` - 浏览目录内容
+  - `get_file_info` - 获取文件详细信息
+- 🎯 支持像资源管理器一样浏览文件系统
+- 📁 可以从驱动器开始逐级浏览目录
+- 📊 显示文件和文件夹的详细信息
 
 ### v1.1.0 (2026-01-12)
 
