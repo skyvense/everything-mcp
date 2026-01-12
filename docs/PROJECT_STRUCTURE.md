@@ -168,7 +168,7 @@ Git 忽略规则，排除：
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/yourusername/everything-mcp.git
+git clone https://github.com/skyvense/everything-mcp.git
 cd everything-mcp
 ```
 

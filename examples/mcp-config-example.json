@@ -6,9 +6,9 @@
       "args": [],
       "env": {
         "EVERYTHING_BASE_URL": "http://192.168.7.187",
-        "EVERYTHING_PORT": "51780",
-        "EVERYTHING_USERNAME": "nate",
-        "EVERYTHING_PASSWORD": "checkout888"
+        "EVERYTHING_PORT": "1780",
+        "EVERYTHING_USERNAME": "skyvense",
+        "EVERYTHING_PASSWORD": "password"
       },
       "comment": "可选: 添加 EVERYTHING_DEBUG=true 启用调试日志"
     }
