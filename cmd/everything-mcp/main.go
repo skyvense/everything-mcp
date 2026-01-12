@@ -1385,7 +1385,7 @@ func (s *MCPEverythingServer) handleSearchWithRegex(
 	}, nil
 }
 
-// handleSearchDuplicateNames 处理重复文件名搜索请求
+// handleSearchDuplicateNames 处理重复文件 名搜索请求
 func (s *MCPEverythingServer) handleSearchDuplicateNames(
 	ctx context.Context,
 	args map[string]interface{},
