@@ -29,7 +29,7 @@
 ### 从源码编译
 
 ```bash
-git clone https://github.com/yourusername/everything-mcp.git
+git clone https://github.com/skyvense/everything-mcp.git
 cd everything-mcp
 
 # 使用 Makefile 编译（推荐）
@@ -42,7 +42,7 @@ go build -o everything-mcp ./cmd/everything-mcp
 ### 使用 Go 安装
 
 ```bash
-go install github.com/yourusername/everything-mcp/cmd/everything-mcp@latest
+go install github.com/skyvense/everything-mcp/cmd/everything-mcp@latest
 ```
 
 ## 配置
