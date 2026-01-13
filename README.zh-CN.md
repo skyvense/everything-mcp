@@ -170,30 +170,38 @@ export EVERYTHING_PASSWORD="your_password"
 
 Everything MCP Server 提供 **14 个强大工具**：
 
+### 输出格式
+
+所有搜索工具返回的结果都包含以下信息：
+- **路径**: 文件或文件夹的完整路径
+- **类型**: file（文件）或 folder（文件夹）
+- **大小**: 文件大小（文件夹显示为 `-`）
+- **修改时间**: 最后修改日期和时间
+
 ### 搜索工具 (11个)
 
 #### 基础搜索
-1. **search_files** - 基本文件搜索
-2. **search_by_extension** - 按扩展名搜索
-3. **search_by_path** - 按路径搜索
+1. **search_files** - 基本文件搜索（返回：路径、类型、大小、日期）
+2. **search_by_extension** - 按扩展名搜索（返回：路径、大小、日期）
+3. **search_by_path** - 按路径搜索（返回：路径、类型、大小、日期）
 
 #### 高级搜索
-4. **search_by_size** - 按文件大小搜索
-5. **search_by_date** - 按日期搜索
-6. **search_recent_files** - 搜索最近修改的文件
-7. **search_large_files** - 搜索大文件
-8. **search_empty_files** - 搜索空文件/文件夹
+4. **search_by_size** - 按文件大小搜索（返回：路径、大小、日期）
+5. **search_by_date** - 按日期搜索（返回：路径、大小、日期）
+6. **search_recent_files** - 搜索最近修改的文件（返回：路径、大小、日期）
+7. **search_large_files** - 搜索大文件（返回：路径、大小、日期）
+8. **search_empty_files** - 搜索空文件/文件夹（返回：路径、大小、日期）
 
 #### 专业搜索
-9. **search_by_content_type** - 按内容类型搜索（图片、视频、音频、文档等）
-10. **search_with_regex** - 正则表达式搜索
-11. **search_duplicate_names** - 搜索重复文件名
+9. **search_by_content_type** - 按内容类型搜索（返回：路径、大小、日期）
+10. **search_with_regex** - 正则表达式搜索（返回：路径、大小、日期）
+11. **search_duplicate_names** - 搜索重复文件名（返回：路径、大小、日期）
 
 ### 浏览工具 (3个)
 
 12. **list_drives** - 列出所有驱动器
-13. **list_directory** - 浏览目录内容
-14. **get_file_info** - 获取文件详细信息
+13. **list_directory** - 浏览目录内容（返回：名称、类型图标、大小、日期）
+14. **get_file_info** - 获取文件详细信息（返回：类型、大小、日期、完整路径）
 
 ### 快速示例
 
