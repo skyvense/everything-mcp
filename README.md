@@ -170,30 +170,38 @@ Use the same JSON format.
 
 Everything MCP Server provides **14 powerful tools**:
 
+### Output Format
+
+All search tools return results with the following information:
+- **Path**: Full path of the file or folder
+- **Type**: file or folder
+- **Size**: File size (folders show `-`)
+- **Modified Time**: Last modification date and time
+
 ### Search Tools (11)
 
 #### Basic Search
-1. **search_files** - Basic file search
-2. **search_by_extension** - Search by extension
-3. **search_by_path** - Search by path
+1. **search_files** - Basic file search (returns: path, type, size, date)
+2. **search_by_extension** - Search by extension (returns: path, size, date)
+3. **search_by_path** - Search by path (returns: path, type, size, date)
 
 #### Advanced Search
-4. **search_by_size** - Search by file size
-5. **search_by_date** - Search by date
-6. **search_recent_files** - Search recently modified files
-7. **search_large_files** - Search large files
-8. **search_empty_files** - Search empty files/folders
+4. **search_by_size** - Search by file size (returns: path, size, date)
+5. **search_by_date** - Search by date (returns: path, size, date)
+6. **search_recent_files** - Search recently modified files (returns: path, size, date)
+7. **search_large_files** - Search large files (returns: path, size, date)
+8. **search_empty_files** - Search empty files/folders (returns: path, size, date)
 
 #### Professional Search
-9. **search_by_content_type** - Search by content type (images, videos, audio, documents, etc.)
-10. **search_with_regex** - Regular expression search
-11. **search_duplicate_names** - Search duplicate filenames
+9. **search_by_content_type** - Search by content type (returns: path, size, date)
+10. **search_with_regex** - Regular expression search (returns: path, size, date)
+11. **search_duplicate_names** - Search duplicate filenames (returns: path, size, date)
 
 ### Browse Tools (3)
 
 12. **list_drives** - List all drives
-13. **list_directory** - Browse directory contents
-14. **get_file_info** - Get detailed file information
+13. **list_directory** - Browse directory contents (returns: name, type icon, size, date)
+14. **get_file_info** - Get detailed file information (returns: type, size, date, full path)
 
 ### Quick Examples
 

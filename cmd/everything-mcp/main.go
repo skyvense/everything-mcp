@@ -312,7 +312,7 @@ func (s *MCPEverythingServer) handleListTools(
 		Tools: []mcp.Tool{
 			{
 				Name:        "search_files",
-				Description: "搜索文件和文件夹。支持文件名、路径、扩展名等多种搜索方式。",
+				Description: "搜索文件和文件夹。支持文件名、路径、扩展名等多种搜索方式。返回结果包含：路径、类型(file/folder)、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -330,7 +330,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_by_extension",
-				Description: "按文件扩展名搜索文件。例如搜索所有 .txt 或 .pdf 文件。",
+				Description: "按文件扩展名搜索文件。例如搜索所有 .txt 或 .pdf 文件。返回结果包含：路径、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -348,7 +348,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_by_path",
-				Description: "在指定路径中搜索文件。可以结合关键词进行更精确的搜索。",
+				Description: "在指定路径中搜索文件。可以结合关键词进行更精确的搜索。返回结果包含：路径、类型(file/folder)、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -370,7 +370,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_by_size",
-				Description: "按文件大小搜索文件。可以搜索大于、小于或在特定范围内的文件。",
+				Description: "按文件大小搜索文件。可以搜索大于、小于或在特定范围内的文件。返回结果包含：路径、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -396,7 +396,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_by_date",
-				Description: "按日期搜索文件。可以搜索特定日期范围内修改或创建的文件。",
+				Description: "按日期搜索文件。可以搜索特定日期范围内修改或创建的文件。返回结果包含：路径、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -428,7 +428,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_recent_files",
-				Description: "搜索最近修改的文件。快速查找最近工作的文件。",
+				Description: "搜索最近修改的文件。快速查找最近工作的文件。返回结果包含：路径、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -451,7 +451,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_large_files",
-				Description: "搜索大文件。快速找出占用空间较大的文件。",
+				Description: "搜索大文件。快速找出占用空间较大的文件。返回结果包含：路径、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -474,7 +474,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_empty_files",
-				Description: "搜索空文件或空文件夹。帮助清理无用的文件。",
+				Description: "搜索空文件或空文件夹。帮助清理无用的文件。返回结果包含：路径、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -498,7 +498,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_by_content_type",
-				Description: "按内容类型搜索文件。例如：图片、视频、音频、文档、压缩包等。",
+				Description: "按内容类型搜索文件。例如：图片、视频、音频、文档、压缩包等。返回结果包含：路径、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -521,7 +521,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_with_regex",
-				Description: "使用正则表达式搜索文件。适合复杂的文件名模式匹配。",
+				Description: "使用正则表达式搜索文件。适合复杂的文件名模式匹配。返回结果包含：路径、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -543,7 +543,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "search_duplicate_names",
-				Description: "搜索具有相同文件名的文件。帮助找出重复或同名文件。",
+				Description: "搜索具有相同文件名的文件。帮助找出重复或同名文件。返回结果包含：路径、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
@@ -569,7 +569,7 @@ func (s *MCPEverythingServer) handleListTools(
 			},
 			{
 				Name:        "list_directory",
-				Description: "列出指定目录的内容（文件和文件夹）。可以一步步浏览文件系统。",
+				Description: "列出指定目录的内容（文件和文件夹）。可以一步步浏览文件系统。返回结果包含：名称、类型(📁/📄)、大小、修改时间。",
 				InputSchema: mcp.ToolInputSchema{
 					Type: "object",
 					Properties: map[string]interface{}{
