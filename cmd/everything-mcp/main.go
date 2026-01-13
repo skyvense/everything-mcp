@@ -71,6 +71,29 @@ type SearchResult struct {
 	FullPath string `json:"full_path,omitempty"`
 }
 
+// parseWindowsFileTime 将 Windows FILETIME 格式转换为可读的日期字符串
+// FILETIME 是从 1601-01-01 00:00:00 UTC 开始的 100 纳秒间隔数
+func parseWindowsFileTime(filetimeStr string) string {
+	filetime, err := strconv.ParseInt(filetimeStr, 10, 64)
+	if err != nil {
+		return ""
+	}
+
+	// Windows FILETIME epoch: 1601-01-01
+	// Unix epoch: 1970-01-01
+	// 两者相差 116444736000000000 个 100 纳秒间隔
+	const windowsEpochDiff = 116444736000000000
+
+	// 转换为 Unix 时间戳（秒）
+	unixTime := (filetime - windowsEpochDiff) / 10000000
+
+	// 转换为 Go time.Time
+	t := time.Unix(unixTime, 0)
+
+	// 格式化为可读的日期时间字符串
+	return t.Format("2006-01-02 15:04:05")
+}
+
 // Search 执行文件搜索
 func (c *EverythingClient) Search(ctx context.Context, query string, maxResults int) ([]SearchResult, error) {
 	var baseURL string
@@ -92,6 +115,9 @@ func (c *EverythingClient) Search(ctx context.Context, query string, maxResults 
 	params := url.Values{}
 	params.Add("search", query)
 	params.Add("json", "1") // 请求 JSON 格式输出
+	params.Add("path_column", "1") // 获取路径信息
+	params.Add("size_column", "1") // 获取文件大小
+	params.Add("date_modified_column", "1") // 获取修改日期
 	if maxResults > 0 {
 		params.Add("count", fmt.Sprintf("%d", maxResults)) // Everything 使用 count 参数限制结果数量
 	}
@@ -153,10 +179,11 @@ func (c *EverythingClient) Search(ctx context.Context, query string, maxResults 
 	var jsonResponse struct {
 		TotalResults int `json:"totalResults"`
 		Results      []struct {
-			Type string `json:"type"`
-			Name string `json:"name"`
-			Path string `json:"path"`
-			Size int64  `json:"size,omitempty"`
+			Type         string `json:"type"`
+			Name         string `json:"name"`
+			Path         string `json:"path"`
+			Size         string `json:"size,omitempty"` // 字符串格式的字节数
+			DateModified string `json:"date_modified,omitempty"` // Windows FILETIME 格式
 		} `json:"results"`
 	}
 
@@ -187,10 +214,25 @@ func (c *EverythingClient) Search(ctx context.Context, query string, maxResults 
 			fullPath = item.Name
 		}
 
+		// 解析文件大小
+		var size int64
+		if item.Size != "" {
+			if parsedSize, err := strconv.ParseInt(item.Size, 10, 64); err == nil {
+				size = parsedSize
+			}
+		}
+
+		// 解析修改日期（Windows FILETIME 格式）
+		var dateStr string
+		if item.DateModified != "" {
+			dateStr = parseWindowsFileTime(item.DateModified)
+		}
+
 		results = append(results, SearchResult{
 			Path:     fullPath,
 			Type:     item.Type,
-			Size:     item.Size,
+			Size:     size,
+			Date:     dateStr,
 			FullPath: fullPath,
 		})
 	}
@@ -650,7 +692,20 @@ func (s *MCPEverythingServer) handleSearchFiles(
 		if i >= maxResults {
 			break
 		}
+		// 基本信息
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
+		
+		// 添加大小信息（如果有）
+		if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		}
+		
+		// 添加日期信息（如果有）
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -711,6 +766,13 @@ func (s *MCPEverythingServer) handleSearchByExtension(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
+		if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		}
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -772,6 +834,13 @@ func (s *MCPEverythingServer) handleSearchByPath(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
+		if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		}
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -971,11 +1040,14 @@ func (s *MCPEverythingServer) handleSearchBySize(
 		if i >= maxResults {
 			break
 		}
-		sizeStr := ""
+		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
 		if result.Size > 0 {
-			sizeStr = fmt.Sprintf(" (%s)", formatFileSize(result.Size))
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
 		}
-		resultText += fmt.Sprintf("%d. %s%s\n", i+1, result.Path, sizeStr)
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -1056,6 +1128,13 @@ func (s *MCPEverythingServer) handleSearchByDate(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
+		if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		}
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -1109,6 +1188,13 @@ func (s *MCPEverythingServer) handleSearchRecentFiles(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
+		if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		}
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -1161,11 +1247,14 @@ func (s *MCPEverythingServer) handleSearchLargeFiles(
 		if i >= maxResults {
 			break
 		}
-		sizeStr := ""
+		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
 		if result.Size > 0 {
-			sizeStr = fmt.Sprintf(" (%s)", formatFileSize(result.Size))
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
 		}
-		resultText += fmt.Sprintf("%d. %s%s\n", i+1, result.Path, sizeStr)
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -1229,6 +1318,13 @@ func (s *MCPEverythingServer) handleSearchEmptyFiles(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
+		if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		}
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -1312,6 +1408,13 @@ func (s *MCPEverythingServer) handleSearchByContentType(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
+		if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		}
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -1373,6 +1476,13 @@ func (s *MCPEverythingServer) handleSearchWithRegex(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
+		if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		}
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	return &mcp.CallToolResult{
@@ -1430,10 +1540,17 @@ func (s *MCPEverythingServer) handleSearchDuplicateNames(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
+		if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		}
+		if result.Date != "" {
+			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
+		}
+		resultText += "\n"
 	}
 
 	if len(results) > 1 {
-		resultText += fmt.Sprintf("\n发现 %d 个同名文件！\n", len(results))
+		resultText += fmt.Sprintf("发现 %d 个同名文件！\n", len(results))
 	}
 
 	return &mcp.CallToolResult{
@@ -1570,6 +1687,9 @@ func (s *MCPEverythingServer) handleListDirectory(
 				name = folder.Path
 			}
 			resultText += fmt.Sprintf("%d. 📁 %s\n", i+1, name)
+			if folder.Date != "" {
+				resultText += fmt.Sprintf("      修改时间: %s\n", folder.Date)
+			}
 		}
 		resultText += "\n"
 	}
@@ -1587,11 +1707,13 @@ func (s *MCPEverythingServer) handleListDirectory(
 			if name == "" {
 				name = file.Path
 			}
-			sizeStr := ""
+			resultText += fmt.Sprintf("%d. 📄 %s\n", i+1, name)
 			if file.Size > 0 {
-				sizeStr = fmt.Sprintf(" (%s)", formatFileSize(file.Size))
+				resultText += fmt.Sprintf("      大小: %s\n", formatFileSize(file.Size))
 			}
-			resultText += fmt.Sprintf("%d. 📄 %s%s\n", i+1, name, sizeStr)
+			if file.Date != "" {
+				resultText += fmt.Sprintf("      修改时间: %s\n", file.Date)
+			}
 			count++
 		}
 	}
