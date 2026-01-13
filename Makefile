@@ -55,7 +55,7 @@ run: build
 # 运行测试客户端
 run-test: build-all
 	@echo "Running test client..."
-	./$(TEST_CLIENT) examples/mcp-config-example.json
+	./$(TEST_CLIENT) config.json
 
 # 格式化代码
 fmt:
