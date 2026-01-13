@@ -356,82 +356,276 @@ func main() {
 	}
 	fmt.Println()
 	
-	// 4. 测试搜索文件
-	fmt.Println("4. 测试搜索文件 (search_files: oray)...")
-	searchParams := map[string]interface{}{
-		"name": "search_files",
-		"arguments": map[string]interface{}{
-			"query":       "oray",
-			"max_results": 10,
+	// 测试用例列表
+	testCases := []struct {
+		name        string
+		tool        string
+		arguments   map[string]interface{}
+		description string
+	}{
+		{
+			name: "test_1_search_files",
+			tool: "search_files",
+			arguments: map[string]interface{}{
+				"query":       "txt",
+				"max_results": 5,
+			},
+			description: "基本文件搜索 (搜索包含 txt 的文件)",
+		},
+		{
+			name: "test_2_search_by_extension",
+			tool: "search_by_extension",
+			arguments: map[string]interface{}{
+				"extension":   "txt",
+				"max_results": 5,
+			},
+			description: "按扩展名搜索 (搜索 .txt 文件)",
+		},
+		{
+			name: "test_3_search_by_path",
+			tool: "search_by_path",
+			arguments: map[string]interface{}{
+				"path":        "C:\\",
+				"query":       "txt",
+				"max_results": 5,
+			},
+			description: "按路径搜索 (在 C:\\ 中搜索 txt)",
+		},
+		{
+			name: "test_4_search_by_size",
+			tool: "search_by_size",
+			arguments: map[string]interface{}{
+				"size_min":    "1KB",
+				"size_max":    "1MB",
+				"max_results": 5,
+			},
+			description: "按大小搜索 (搜索 1KB-1MB 的文件)",
+		},
+		{
+			name: "test_5_search_by_date",
+			tool: "search_by_date",
+			arguments: map[string]interface{}{
+				"date_from":   "2024-01-01",
+				"date_to":     "2024-12-31",
+				"date_type":   "modified",
+				"max_results": 5,
+			},
+			description: "按日期搜索 (搜索 2024 年修改的文件)",
+		},
+		{
+			name: "test_6_search_recent_files",
+			tool: "search_recent_files",
+			arguments: map[string]interface{}{
+				"days":        7,
+				"max_results": 5,
+			},
+			description: "搜索最近文件 (最近 7 天)",
+		},
+		{
+			name: "test_7_search_large_files",
+			tool: "search_large_files",
+			arguments: map[string]interface{}{
+				"min_size":    "10MB",
+				"max_results": 5,
+			},
+			description: "搜索大文件 (>10MB)",
+		},
+		{
+			name: "test_8_search_empty_files",
+			tool: "search_empty_files",
+			arguments: map[string]interface{}{
+				"type":        "file",
+				"max_results": 5,
+			},
+			description: "搜索空文件",
+		},
+		{
+			name: "test_9_search_by_content_type",
+			tool: "search_by_content_type",
+			arguments: map[string]interface{}{
+				"content_type": "image",
+				"max_results":  5,
+			},
+			description: "按内容类型搜索 (搜索图片)",
+		},
+		{
+			name: "test_10_search_with_regex",
+			tool: "search_with_regex",
+			arguments: map[string]interface{}{
+				"regex":       ".*\\.txt$",
+				"max_results": 5,
+			},
+			description: "正则表达式搜索 (搜索 .txt 结尾的文件)",
+		},
+		{
+			name: "test_11_search_duplicate_names",
+			tool: "search_duplicate_names",
+			arguments: map[string]interface{}{
+				"filename":    "config.txt",
+				"max_results": 5,
+			},
+			description: "搜索重复文件名 (搜索 config.txt)",
+		},
+		{
+			name: "test_12_list_drives",
+			tool: "list_drives",
+			arguments: map[string]interface{}{},
+			description: "列出所有驱动器",
+		},
+		{
+			name: "test_13_list_directory",
+			tool: "list_directory",
+			arguments: map[string]interface{}{
+				"path":        "C:\\",
+				"max_results": 10,
+			},
+			description: "列出目录内容 (C:\\)",
+		},
+		{
+			name: "test_14_get_file_info",
+			tool: "get_file_info",
+			arguments: map[string]interface{}{
+				"path": "C:\\Windows\\System32\\notepad.exe",
+			},
+			description: "获取文件信息 (notepad.exe)",
 		},
 	}
 	
-	searchResponse, err := client.SendRequest(ctx, "tools/call", searchParams)
-	if err != nil {
-		log.Fatalf("tools/call 请求失败: %v", err)
-	}
+	// 执行所有测试
+	successCount := 0
+	failCount := 0
 	
-	if searchResponse.Error != nil {
-		log.Fatalf("tools/call 错误: %v", searchResponse.Error)
-	}
+	fmt.Println("=== 开始测试所有工具 ===")
+	fmt.Println()
 	
-	fmt.Println("✅ search_files 调用成功")
-	var callResult map[string]interface{}
-	if err := json.Unmarshal(searchResponse.Result, &callResult); err == nil {
-		if content, ok := callResult["content"].([]interface{}); ok {
-			for _, item := range content {
-				if itemMap, ok := item.(map[string]interface{}); ok {
+	for i, tc := range testCases {
+		fmt.Printf("%d. %s\n", i+1, tc.description)
+		
+		params := map[string]interface{}{
+			"name":      tc.tool,
+			"arguments": tc.arguments,
+		}
+		
+		response, err := client.SendRequest(ctx, "tools/call", params)
+		if err != nil {
+			fmt.Printf("   ❌ 请求失败: %v\n", err)
+			failCount++
+			fmt.Println()
+			continue
+		}
+		
+		if response.Error != nil {
+			fmt.Printf("   ❌ 工具错误: %v\n", response.Error.Message)
+			failCount++
+			fmt.Println()
+			continue
+		}
+		
+		var callResult map[string]interface{}
+		if err := json.Unmarshal(response.Result, &callResult); err != nil {
+			fmt.Printf("   ❌ 解析结果失败: %v\n", err)
+			failCount++
+			fmt.Println()
+			continue
+		}
+		
+		// 检查是否有错误
+		if isError, ok := callResult["isError"].(bool); ok && isError {
+			if content, ok := callResult["content"].([]interface{}); ok && len(content) > 0 {
+				if itemMap, ok := content[0].(map[string]interface{}); ok {
 					if text, ok := itemMap["text"].(string); ok {
-						fmt.Printf("   结果:\n%s\n", text)
+						fmt.Printf("   ❌ 工具返回错误: %s\n", text)
 					}
 				}
 			}
+			failCount++
+			fmt.Println()
+			continue
 		}
-		if isError, ok := callResult["isError"].(bool); ok && isError {
-			fmt.Println("   ⚠️  工具返回错误")
-		}
-	}
-	fmt.Println()
-	
-	// 5. 测试按扩展名搜索
-	fmt.Println("5. 测试按扩展名搜索 (search_by_extension: txt)...")
-	extParams := map[string]interface{}{
-		"name": "search_by_extension",
-		"arguments": map[string]interface{}{
-			"extension":   "txt",
-			"max_results": 5,
-		},
-	}
-	
-	extResponse, err := client.SendRequest(ctx, "tools/call", extParams)
-	if err != nil {
-		log.Fatalf("tools/call 请求失败: %v", err)
-	}
-	
-	if extResponse.Error != nil {
-		log.Fatalf("tools/call 错误: %v", extResponse.Error)
-	}
-	
-	fmt.Println("✅ search_by_extension 调用成功")
-	var extResult map[string]interface{}
-	if err := json.Unmarshal(extResponse.Result, &extResult); err == nil {
-		if content, ok := extResult["content"].([]interface{}); ok {
-			for _, item := range content {
-				if itemMap, ok := item.(map[string]interface{}); ok {
-					if text, ok := itemMap["text"].(string); ok {
-						// 只显示前几行
-						lines := []rune(text)
-						if len(lines) > 200 {
-							fmt.Printf("   结果 (前200字符):\n%s...\n", string(lines[:200]))
-						} else {
-							fmt.Printf("   结果:\n%s\n", text)
+		
+		// 显示结果
+		fmt.Printf("   ✅ 调用成功\n")
+		if content, ok := callResult["content"].([]interface{}); ok && len(content) > 0 {
+			if itemMap, ok := content[0].(map[string]interface{}); ok {
+				if text, ok := itemMap["text"].(string); ok {
+					// 限制输出长度
+					lines := []rune(text)
+					maxLen := 300
+					if len(lines) > maxLen {
+						preview := string(lines[:maxLen])
+						lineCount := len([]rune(text)) / 50 // 粗略估计行数
+						fmt.Printf("   📄 返回数据: %d+ 字符 (约 %d 行)\n", len(lines), lineCount)
+						fmt.Printf("   预览:\n")
+						// 显示前几行
+						previewLines := []string{}
+						for _, line := range []rune(preview) {
+							if line == '\n' {
+								if len(previewLines) >= 3 {
+									break
+								}
+								previewLines = append(previewLines, "")
+							}
+						}
+						fmt.Printf("   %s...\n", preview[:min(200, len(preview))])
+					} else {
+						fmt.Printf("   📄 返回数据: %d 字符\n", len(lines))
+						if len(text) > 0 {
+							// 只显示前3行
+							allLines := splitLines(text)
+							displayLines := allLines
+							if len(allLines) > 3 {
+								displayLines = allLines[:3]
+								fmt.Printf("   预览 (前3行):\n")
+								for _, line := range displayLines {
+									fmt.Printf("      %s\n", line)
+								}
+								fmt.Printf("      ... (共 %d 行)\n", len(allLines))
+							} else {
+								for _, line := range displayLines {
+									fmt.Printf("      %s\n", line)
+								}
+							}
 						}
 					}
 				}
 			}
 		}
+		successCount++
+		fmt.Println()
+		
+		// 稍微等待一下，避免请求过快
+		time.Sleep(100 * time.Millisecond)
 	}
-	fmt.Println()
 	
 	fmt.Println("=== 测试完成 ===")
+	fmt.Printf("✅ 成功: %d/%d\n", successCount, len(testCases))
+	fmt.Printf("❌ 失败: %d/%d\n", failCount, len(testCases))
+	
+	if failCount > 0 {
+		os.Exit(1)
+	}
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func splitLines(text string) []string {
+	lines := []string{}
+	current := ""
+	for _, char := range text {
+		if char == '\n' {
+			lines = append(lines, current)
+			current = ""
+		} else {
+			current += string(char)
+		}
+	}
+	if current != "" {
+		lines = append(lines, current)
+	}
+	return lines
 }
