@@ -114,9 +114,9 @@ func (c *EverythingClient) Search(ctx context.Context, query string, maxResults 
 	// Everything HTTP API 使用 /?search= 参数
 	params := url.Values{}
 	params.Add("search", query)
-	params.Add("json", "1") // 请求 JSON 格式输出
-	params.Add("path_column", "1") // 获取路径信息
-	params.Add("size_column", "1") // 获取文件大小
+	params.Add("json", "1")                 // 请求 JSON 格式输出
+	params.Add("path_column", "1")          // 获取路径信息
+	params.Add("size_column", "1")          // 获取文件大小
 	params.Add("date_modified_column", "1") // 获取修改日期
 	if maxResults > 0 {
 		params.Add("count", fmt.Sprintf("%d", maxResults)) // Everything 使用 count 参数限制结果数量
@@ -182,7 +182,7 @@ func (c *EverythingClient) Search(ctx context.Context, query string, maxResults 
 			Type         string `json:"type"`
 			Name         string `json:"name"`
 			Path         string `json:"path"`
-			Size         string `json:"size,omitempty"` // 字符串格式的字节数
+			Size         string `json:"size,omitempty"`          // 字符串格式的字节数
 			DateModified string `json:"date_modified,omitempty"` // Windows FILETIME 格式
 		} `json:"results"`
 	}
@@ -694,17 +694,17 @@ func (s *MCPEverythingServer) handleSearchFiles(
 		}
 		// 基本信息
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
-		
+
 		// 添加大小信息（如果有）
 		if result.Size > 0 {
 			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
 		}
-		
+
 		// 添加日期信息（如果有）
 		if result.Date != "" {
 			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
 		}
-		
+
 		resultText += "\n"
 	}
 
