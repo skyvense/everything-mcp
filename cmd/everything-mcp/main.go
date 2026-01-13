@@ -694,17 +694,26 @@ func (s *MCPEverythingServer) handleSearchFiles(
 		}
 		// 基本信息
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
-
-		// 添加大小信息（如果有）
-		if result.Size > 0 {
-			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		
+		// 添加类型信息
+		if result.Type != "" {
+			resultText += fmt.Sprintf("   类型: %s\n", result.Type)
 		}
-
+		
+		// 添加大小信息（如果有，文件夹显示 "-"）
+		if result.Type == "folder" {
+			resultText += "   大小: -\n"
+		} else if result.Size > 0 {
+			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		} else if result.Type == "file" {
+			resultText += "   大小: 0 B\n"
+		}
+		
 		// 添加日期信息（如果有）
 		if result.Date != "" {
 			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
 		}
-
+		
 		resultText += "\n"
 	}
 
@@ -766,8 +775,12 @@ func (s *MCPEverythingServer) handleSearchByExtension(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
-		if result.Size > 0 {
+		if result.Type == "folder" {
+			resultText += "   大小: -\n"
+		} else if result.Size > 0 {
 			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		} else if result.Type == "file" {
+			resultText += "   大小: 0 B\n"
 		}
 		if result.Date != "" {
 			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
@@ -834,8 +847,15 @@ func (s *MCPEverythingServer) handleSearchByPath(
 			break
 		}
 		resultText += fmt.Sprintf("%d. %s\n", i+1, result.Path)
-		if result.Size > 0 {
+		if result.Type != "" {
+			resultText += fmt.Sprintf("   类型: %s\n", result.Type)
+		}
+		if result.Type == "folder" {
+			resultText += "   大小: -\n"
+		} else if result.Size > 0 {
 			resultText += fmt.Sprintf("   大小: %s\n", formatFileSize(result.Size))
+		} else if result.Type == "file" {
+			resultText += "   大小: 0 B\n"
 		}
 		if result.Date != "" {
 			resultText += fmt.Sprintf("   修改时间: %s\n", result.Date)
