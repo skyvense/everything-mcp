@@ -5,13 +5,13 @@
 #   - URL: http://192.168.7.187
 #   - 端口: 51780
 #   - 用户名: nate
-#   - 密码: checkout
+#   - 密码: 通过环境变量 EVERYTHING_PASSWORD 设置
 
 # 设置环境变量
 export EVERYTHING_BASE_URL="http://192.168.7.187"
 export EVERYTHING_PORT="51780"
 export EVERYTHING_USERNAME="nate"
-export EVERYTHING_PASSWORD="your_password"
+export EVERYTHING_PASSWORD="${EVERYTHING_PASSWORD:-your_password}"
 
 # 检查程序是否存在
 if [ ! -f "./everything-mcp" ]; then
